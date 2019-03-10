@@ -1,3 +1,71 @@
 <resources>
     <string name="app_name">AranaAthletics1</string>
+
+    <!-- singin strings start -->
+    <string name="title_activity_sign_in">SignIn</string>
+    <!-- signin strings end -->
+
+
+    <!-- laned strings start -->
+    <string name="title_activity_laned_events">LanedEvents</string>
+
+    <string name="exitButton">Exit</string>
+    <string name="nextButton">Next</string>
+    <string name="prevButton">Prev</string>
+    <string name="raceDistance">Same (100m)</string>
+    <string name="raceNumber">Race 1</string>
+    <string name="connection">Connection Status</string>
+
+    <string name="left0">0</string>
+    <string name="left1">1</string>
+    <string name="left2">2</string>
+    <string name="left3">3</string>
+    <string name="left4">4</string>
+    <string name="left5">5</string>
+    <string name="left6">6</string>
+    <string name="left7">7</string>
+    <string name="left8">8</string>
+    <string name="left9">9</string>
+    <string name="leftComma">,</string>
+    <string name="leftTrialist">Trialist</string>
+    <string name="leftNoRunner">No Runner</string>
+    <string name="leftDelete">Delete</string>
+    <string name="lane2Text">Lane 2</string>
+    <string name="leftAthlete">Athlete Details</string>
+    <string name="leftTextEntry">Enter Bib Number</string>
+
+
+    <string name="right0">0</string>
+    <string name="right1">1</string>
+    <string name="right2">2</string>
+    <string name="right3">3</string>
+    <string name="right4">4</string>
+    <string name="right5">5</string>
+    <string name="right6">6</string>
+    <string name="right7">7</string>
+    <string name="right8">8</string>
+    <string name="right9">9</string>
+    <string name="rightComma">,</string>
+    <string name="rightTrialist">Trialist</string>
+    <string name="rightNoRunner">No Runner</string>
+    <string name="rightDelete">Delete</string>
+    <string name="lane1Text">Lane 1</string>
+    <string name="rightAthlete">Athlete Details</string>
+    <string name="rightTextEntry">Enter Bib Number</string>
+
+
+    <string name="lanes78names">Lane 7 8 Marshall</string>
+    <string name="lanes56names">Lane 5 6 Marshall</string>
+    <string name="lanes34names">Lane 3 4 Marshall</string>
+    <string name="lanes12names">Lane 1 2 Marshall</string>
+    <!-- laned strings end -->
+
+
+    <!-- unlaned strings start -->
+    <string name="title_activity_unlaned_events">UnlanedEvents</string>
+    <!-- unlaned strings end -->
+
+
+
+
 </resources>
