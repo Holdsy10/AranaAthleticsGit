@@ -3,6 +3,8 @@ package com.example.curtisholdsworth1.aranaathletics1;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,8 +23,12 @@ public class LanedEvents extends AppCompatActivity {
     private Button left8;
     private Button left9;
     private Button left0;
+    private Button leftComma;
     private TextView leftTextEntry;
     private Button leftDelete;
+    private TextView leftAthlete;
+    private Button leftTrialist;
+    private Button leftNoRunner;
 
 
 
@@ -98,6 +104,24 @@ public class LanedEvents extends AppCompatActivity {
                 leftTextEntry.setText(leftTextEntry.getText().toString() + getString(R.string.left9));
             }
         });
+        leftTrialist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                leftTextEntry.setText(leftTextEntry.getText().toString() + "T");
+            }
+        });
+        leftComma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                leftTextEntry.setText(leftTextEntry.getText().toString() + getString(R.string.leftComma));
+            }
+        });
+        leftNoRunner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                leftTextEntry.setText(leftTextEntry.getText().toString() + "-");
+            }
+        });
         leftDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +134,29 @@ public class LanedEvents extends AppCompatActivity {
         });
 
 
-        //textwatcher
+
+    leftTextEntry.addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String strleftTextEntry = leftTextEntry.getText().toString();
+            leftAthlete.setText(strleftTextEntry);
+
+            if (strleftTextEntry == "0"){
+                leftTextEntry.setText(leftTextEntry.getText().toString() + "Zero");
+
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    });
     }
 
 
@@ -127,8 +173,13 @@ public class LanedEvents extends AppCompatActivity {
         left7 = (Button)findViewById(R.id.left7);
         left8 = (Button)findViewById(R.id.left8);
         left9 = (Button)findViewById(R.id.left9);
+        leftComma = (Button)findViewById(R.id.leftComma);
         leftDelete = (Button)findViewById(R.id.leftDelete);
         leftTextEntry = (TextView)findViewById(R.id.leftTextEntry);
+        leftAthlete = (TextView)findViewById(R.id.leftAthlete);
+        leftTrialist = (Button)findViewById(R.id.leftTrialist);
+        leftNoRunner = (Button)findViewById(R.id.leftNoRunner);
+
     }
 
 }

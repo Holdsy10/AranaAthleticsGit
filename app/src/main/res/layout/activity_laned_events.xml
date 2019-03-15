@@ -58,7 +58,9 @@
         android:layout_marginRight="16dp"
         android:gravity="center"
         android:text="@string/lane1Text"
+        android:textColor="@android:color/background_dark"
         android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/lane2Text"
         app:layout_constraintTop_toBottomOf="@+id/nextButton" />
@@ -72,7 +74,10 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/rightTextEntry"
+        android:hint="Enter Bib Number"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/leftTextEntry"
         app:layout_constraintTop_toBottomOf="@+id/rightAthlete" />
@@ -83,6 +88,7 @@
         android:layout_height="47dp"
         android:gravity="center"
         android:text="@string/lanes12names"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -92,6 +98,7 @@
         android:layout_height="47dp"
         android:gravity="center"
         android:text="@string/lanes34names"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/lane12Names" />
 
@@ -101,6 +108,7 @@
         android:layout_height="47dp"
         android:gravity="center"
         android:text="@string/lanes56names"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/lanes34Names" />
 
@@ -110,6 +118,7 @@
         android:layout_height="47dp"
         android:gravity="center"
         android:text="@string/lanes78names"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/lanes56Names"
         app:layout_constraintStart_toStartOf="parent" />
@@ -476,10 +485,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="4dp"
         android:hint="Enter Bib Number"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/leftAthlete"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
 
-        />
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leftAthlete" />
 
 
     <TextView
@@ -490,7 +501,10 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="3dp"
-        android:text="@string/leftAthlete"
+        android:hint="Athlete Details"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/leftTextEntry"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lane2Text" />
@@ -504,7 +518,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/rightAthlete"
+        android:hint="Athlete Details"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/leftAthlete"
         app:layout_constraintTop_toBottomOf="@+id/lane1Text" />
@@ -518,7 +535,9 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/lane2Text"
+        android:textColor="@android:color/black"
         android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prevButton" />
 
@@ -530,6 +549,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="15dp"
         android:text="@string/raceDistance"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -541,6 +562,7 @@
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
         android:text="@string/connection"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/exitButton"
         app:layout_constraintTop_toTopOf="parent" />
@@ -554,6 +576,7 @@
         android:layout_marginRight="8dp"
         android:gravity="center"
         android:text="@string/raceNumber"
+        android:textColor="@android:color/black"
         android:textSize="36sp"
         app:layout_constraintEnd_toStartOf="@+id/nextButton"
         app:layout_constraintTop_toTopOf="parent" />
