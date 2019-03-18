@@ -3,6 +3,10 @@
 
     <!-- singin strings start -->
     <string name="title_activity_sign_in">SignIn</string>
+    <string name="Laned">Laned</string>
+    <string name="Unaled">Unlaned</string>
+    <string name="autoParentName">Please Enter Your Name</string>
+
     <!-- signin strings end -->
 
 
