@@ -7,10 +7,19 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -33,6 +42,11 @@ public class LanedEvents extends AppCompatActivity {
     private Button leftTrialist;
     private Button leftNoRunner;
     private Button exitButton;
+    private LanedEvents SignIn;
+
+    private SignIn numbers;
+
+    List<AthleteSample> athleteSamples = new ArrayList<>();
 
 
 
@@ -45,9 +59,17 @@ public class LanedEvents extends AppCompatActivity {
 
         setupUIViews();
         leftKeypad();
+        //readAthletesData();
+
+        numbers = new SignIn();
+        athleteSamples = numbers.getList();
+
+        //leftAthlete.setText(numbers.athleteSamples.size());
 
 
         Button goToSignIn = (Button) findViewById(R.id.exitButton);
+
+
         goToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,14 +79,9 @@ public class LanedEvents extends AppCompatActivity {
 
         });
 
-
-    leftTextEntry.addTextChangedListener(inputWatcher);
-    final Pattern pLeftInput = Pattern.compile("[0-9]");
-
-
+        leftTextEntry.addTextChangedListener(inputWatcher);
+        final Pattern pLeftInput = Pattern.compile("[0-9]");
     }
-
-
 
 
 
@@ -160,6 +177,92 @@ public class LanedEvents extends AppCompatActivity {
         });
     }
 
+    private void updateKeypad() {
+        try {
+
+
+            String leftInput = leftTextEntry.getText().toString();
+            int input = leftTextEntry.length();
+
+            //Normal Entry
+            //123
+            if (leftInput.length() > 3 && !leftInput.contains(",") && !leftInput.startsWith("0")) {
+                leftTextEntry.setText(leftInput.substring(0, input - 1));
+            }
+            //123,123
+            if (leftInput.length() > 7 && leftInput.contains(",") && !leftInput.startsWith("0") && !leftInput.contains(",0")){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+            //123,0123
+            if (leftInput.length() > 8 && !leftInput.startsWith(("0")) && leftInput.contains(",0")){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+
+
+            // Runner is From Another Club
+            if (leftInput.length() > 4 && leftInput.substring(0, 1).equals("0") && !leftInput.contains(",")) {
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+            if (leftInput.length() > 9 && leftInput.startsWith(("0")) && leftInput.contains(",0") ){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+            if (leftInput.length() > 8 && leftInput.startsWith(("0")) && !leftInput.contains(",0") ){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+
+
+            // If Trialist, Next input has to be comma.
+            if (leftInput.equals("T")) {
+                leftAthlete.setText("Trialist");
+            }
+            if (leftInput.length() > 5 && leftInput.contains("T,") && !leftInput.contains(",0")){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+            if (leftInput.length() > 6 && leftInput.contains("T,") && leftInput.contains(",0")){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+            if (leftInput.startsWith("T") && leftInput.length() > 1 && !leftInput.contains(",")){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+
+            // Double input on accident
+            if (leftInput.contains(",,") || leftInput.contains("TT") || leftInput.contains("--") || leftInput.contains("T-") ||
+                     leftInput.contains("-T") || leftInput.contains(",-")|| leftInput.contains("-,") || leftInput.contains(",T,")|| leftInput.contains(",T")) {
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+
+            // If there is no runner
+            if (leftInput.startsWith("-") && leftInput.length() > 1) {
+
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+            //if comma is first input
+            if (leftInput.startsWith(",")){
+                leftTextEntry.setText(leftInput.substring(0, input-1));
+            }
+
+
+        } catch (NumberFormatException e) {
+        }
+    }
+
+    private void showAthleteData() {
+        String leftInput = leftTextEntry.getText().toString();
+        for (int i=0; i <athleteSamples.size(); i++) {
+            for (int j=0; j <athleteSamples.size(); j++) {
+                if (leftInput.equals(athleteSamples.get(i).getAthleteNumber())) {
+                    leftAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender());
+                } else if (leftInput.equals(athleteSamples.get(i).getAthleteNumber()+ "," + athleteSamples.get(j).getAthleteNumber())) {
+                    leftAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender()
+                            +"\n"+ athleteSamples.get(j).getAthleteName() + " " + athleteSamples.get(j).getAthleteAge() + " " + athleteSamples.get(j).getAthleteGender());
+                } else if (leftInput.equals(athleteSamples.get(i).getAthleteNumber()+ ",T")) {
+                    leftAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender()
+                            +"\nTrialist");
+
+            }
+        }
+    } }
+
     private TextWatcher inputWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -168,87 +271,16 @@ public class LanedEvents extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            try {
-                String leftInput = leftTextEntry.getText().toString();
-                int input = leftTextEntry.length();
-
-                //Normal Entry
-                //123
-                if (leftInput.length() > 3 && !leftInput.contains(",") && !leftInput.startsWith("0")) {
-                    leftTextEntry.setText(leftInput.substring(0, input - 1));
-                }
-                //123,123
-                if (leftInput.length() > 7 && leftInput.contains(",") && !leftInput.startsWith("0") && !leftInput.contains(",0")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-                //123,0123
-                if (leftInput.length() > 8 && !leftInput.startsWith(("0")) && leftInput.contains(",0")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-
-
-                // Runner is From Another Club
-                if (leftInput.length() > 4 && leftInput.substring(0, 1).equals("0") && !leftInput.contains(",")) {
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-                if (leftInput.length() > 9 && leftInput.startsWith(("0")) && leftInput.contains(",0") ){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-                if (leftInput.length() > 8 && leftInput.startsWith(("0")) && !leftInput.contains(",0") ){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-
-
-                // If Trialist, Next input has to be comma.
-                if (leftInput.equals("T")) {
-                    leftAthlete.setText("Trialist");
-                }
-                if (leftInput.length() > 5 && leftInput.contains("T,") && !leftInput.contains(",0")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-                if (leftInput.length() > 6 && leftInput.contains("T,") && leftInput.contains(",0")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-                if (leftInput.startsWith("T") && leftInput.length() > 1 && !leftInput.contains(",")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-
-                // Double input on accident
-                if (leftInput.contains(",,") || leftInput.contains("TT") || leftInput.contains("--") || leftInput.contains("T-") || leftInput.contains("-T")|| leftInput.contains("T,") || leftInput.contains(",T") || leftInput.contains(",-")|| leftInput.contains("-,")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-
-
-                // If there is no runner
-                if (leftInput.startsWith("-") && leftInput.length() > 1) {
-
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-                //if comma is first input
-                if (leftInput.startsWith(",")){
-                    leftTextEntry.setText(leftInput.substring(0, input-1));
-                }
-
-
-
-
-
-
-            } catch (NumberFormatException e) {
-            }
+            updateKeypad();
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            String leftInput = leftTextEntry.getText().toString();
-            int input = leftTextEntry.length();
-            if (leftInput.contains(",")){
-                int max = leftInput.length();
-                String maxx = String.valueOf(max);
-                leftTextEntry.setFilters(new InputFilter[] {new InputFilter.LengthFilter(max+3)});
-                //leftAthlete.setText(maxx);
+            showAthleteData();
             }
-        }
+
+
+
     };
 
 

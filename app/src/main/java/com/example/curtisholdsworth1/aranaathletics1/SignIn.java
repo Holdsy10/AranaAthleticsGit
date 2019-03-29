@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,17 +28,54 @@ public class SignIn extends AppCompatActivity {
     private EditText parentsName;
     private Button unlanedEvents;
     private Button lanedEvents;
-    private String parentName;
+    private ListView listView;
+    private LanedEvents tests;
+    static List<AthleteSample> athleteSamples = new ArrayList<>();
 
-
-
-
-
-    private static final String[] NAMES = new String[]{
-            "Curtis Holdsworth", "Nathan Haslam", " Santosh Pun", "Benjamin Martin"
-
+    private static final String[] NAMES = new String[] {
+            "Curtis","Nathan"
     };
 
+
+
+
+    public List<AthleteSample> getList() {
+        return athleteSamples;
+    }
+
+    public void readAthletesData() {
+        InputStream is = getResources().openRawResource(R.raw.athletes);
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is, Charset.forName("UTF-8"))
+        );
+
+        String line = "";
+        try {
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(",");
+
+                AthleteSample sample = new AthleteSample();
+                sample.setAthleteName(tokens[0]);
+                //sample.setAthleteNumber(Integer.parseInt(tokens[1]));
+                //sample.setAthleteAge(Integer.parseInt(tokens[2]));
+                sample.setAthleteNumber(tokens[1]);
+                sample.setAthleteAge(tokens[2]);
+                sample.setAthleteGender(tokens[3]);
+                sample.setAthleteParent(tokens[4]);
+
+                athleteSamples.add(sample);
+
+                Log.d("MyActivity", "Just created: " + sample);
+
+
+            }
+        } catch(IOException e){
+            Log.wtf("MyActivity", "Error Reading Data File on Line " + line, e);
+            e.printStackTrace();
+        }
+
+
+    }
 
 
     private TextWatcher parentsTextWatcher = new TextWatcher() {
@@ -72,9 +110,7 @@ public class SignIn extends AppCompatActivity {
         lanedEvents = findViewById(R.id.btnlaned);
         unlanedEvents = findViewById(R.id.btnUnlaned);
 
-
-
-        readCsvData();
+        readAthletesData();
 
 
 
@@ -101,30 +137,5 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-    public List<ReadCsv> athleteSamples= new ArrayList<>();
-    private void readCsvData() {
 
-        InputStream is = getResources().openRawResource(R.raw.parentsnames);
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, Charset.forName("UTF-8"))
-        );
-
-        String line = "";
-        try {
-            while ((line = reader.readLine()) != null) {
-                //split by ","
-                String[] tokens = line.split(",");
-
-                //Read the Data
-                ReadCsv sample = new ReadCsv();
-                sample.setParentName(tokens[0]);
-                //samples.set(kidsname)(tokens[1]);
-                //samples.setAge(Integer.parseInt(tokens[2]));
-                athleteSamples.add(sample);
-            }
-        } catch (IOException e) {
-            Log.wtf("MyActivity", "Error Reading CSV on line " + line, e);
-            e.printStackTrace();
-        }
-    }
 }
