@@ -2,6 +2,7 @@ package com.example.curtisholdsworth1.aranaathletics1;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,8 +45,11 @@ public class LanedEvents extends AppCompatActivity {
     private Button leftNoRunner;
     private Button exitButton;
     private LanedEvents SignIn;
-
-    private SignIn numbers;
+    private Button nextButton;
+    private TextView raceNumber;
+    int race = 1;
+    private SignIn signin;
+    private Button prevButton;
 
     List<AthleteSample> athleteSamples = new ArrayList<>();
 
@@ -59,13 +64,9 @@ public class LanedEvents extends AppCompatActivity {
 
         setupUIViews();
         leftKeypad();
-        //readAthletesData();
-
-        numbers = new SignIn();
-        athleteSamples = numbers.getList();
-
-        //leftAthlete.setText(numbers.athleteSamples.size());
-
+        //updateRace();
+        signin = new SignIn();
+        athleteSamples = signin.getList();
 
         Button goToSignIn = (Button) findViewById(R.id.exitButton);
 
@@ -79,9 +80,55 @@ public class LanedEvents extends AppCompatActivity {
 
         });
 
+
+
         leftTextEntry.addTextChangedListener(inputWatcher);
-        final Pattern pLeftInput = Pattern.compile("[0-9]");
+
+
+
+
+        nextButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                race++;
+                raceNumber.setText("Race " + String.valueOf(race));
+            }
+        });
+
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (race >=2) {
+                    race--;
+                raceNumber.setText("Race " + String.valueOf(race));
+            }
+        }
+        });
+
+
+        File fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator +"MyDir");
+        if(!fileDir.exists()){
+            try{
+                fileDir.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator +"BlogData"+File.separator+"MyText.txt");
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+
     }
+
+
 
 
 
@@ -227,7 +274,7 @@ public class LanedEvents extends AppCompatActivity {
 
             // Double input on accident
             if (leftInput.contains(",,") || leftInput.contains("TT") || leftInput.contains("--") || leftInput.contains("T-") ||
-                     leftInput.contains("-T") || leftInput.contains(",-")|| leftInput.contains("-,") || leftInput.contains(",T,")|| leftInput.contains(",T")) {
+                     leftInput.contains("-T") || leftInput.contains(",-")|| leftInput.contains("-,") || leftInput.contains(",T,")) {
                 leftTextEntry.setText(leftInput.substring(0, input-1));
             }
 
@@ -241,6 +288,17 @@ public class LanedEvents extends AppCompatActivity {
                 leftTextEntry.setText(leftInput.substring(0, input-1));
             }
 
+            if (leftInput.length() == 0){
+                leftAthlete.setText("");
+            }
+
+            if (leftInput.contains(",")) {
+                int comma = 0;
+                comma++;
+                if (comma == 2) {
+                    leftTextEntry.setText(leftInput.substring(0, input - 1));
+                }
+            }
 
         } catch (NumberFormatException e) {
         }
@@ -302,7 +360,10 @@ public class LanedEvents extends AppCompatActivity {
                 leftTrialist = (Button) findViewById(R.id.leftTrialist);
                 leftNoRunner = (Button) findViewById(R.id.leftNoRunner);
                 Button goToSignIn = (Button) findViewById(R.id.exitButton);
-
+                nextButton = (Button) findViewById(R.id.nextButton);
+                raceNumber = (TextView) findViewById(R.id.raceNumber);
+                prevButton = (Button) findViewById(R.id.prevButton);
+                // Put more here
             }
 
         }
