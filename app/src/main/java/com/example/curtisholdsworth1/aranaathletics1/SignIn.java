@@ -148,32 +148,7 @@ public class SignIn extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, NAMES);
         editText.setAdapter(adapter);
 
-     /*   fetchData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Ion.with(getApplicationContext()).load("https://www.aranala.com.au/ipad/fetch2.php").asString()
-                        .setCallback(new FutureCallback<String>() {
-                            @Override
-                            public void onCompleted(Exception e, String result) {
-                                HTML = result.getBytes();
-                                toastMessage("Arana HTML Captured");
-                                Log.d("Debug", HTML.toString());
 
-                                //Save to File After Captured
-                                //save(HTML.toString());
-
-                                //Extract Zip File
-                                try {
-                                    unzip(Environment.getExternalStorageDirectory().getPath(), getFilesDir().toString());
-                                    Log.d("Debug", "Unzip Successfully to" + getFilesDir().toString());
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                        });
-            }
-        });
-    }*/
         fetchData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,7 +159,7 @@ public class SignIn extends AppCompatActivity {
                             Log.d("Debug","" + downloaded + " / " + total);
                         }
                         })
-                        .write(new File(getFilesDir() + "/fetch2.zip"))
+                        .write(new File(getFilesDir() + "/fetch2.xlsx"))
                         .setCallback(new FutureCallback<File>() {
                             @Override
                             public void onCompleted(Exception e, File file) {
@@ -197,7 +172,6 @@ public class SignIn extends AppCompatActivity {
                         });
             }
         });
-
     }
 
                 //Easy method to write a message to device screen.
@@ -268,6 +242,10 @@ public class SignIn extends AppCompatActivity {
             Log.e("Error", "Unzip exception", e);
         }
     }
+
+
+
+
 
 
 }
