@@ -159,16 +159,21 @@ public class SignIn extends AppCompatActivity {
                             Log.d("Debug","" + downloaded + " / " + total);
                         }
                         })
-                        .write(new File(getFilesDir() + "/fetch2.xlsx"))
+                        .write(new File(getFilesDir() + File.separator+ "fetch2.xlsx"))
                         .setCallback(new FutureCallback<File>() {
                             @Override
                             public void onCompleted(Exception e, File file) {
                                 try {
-                                    unzip(getFilesDir()+"/fetch2.zip",getFilesDir()+"/fetch2");
+                                    unzip(getFilesDir()+ File.separator+ "fetch2.xlsx",getFilesDir()+ File.separator+"fetch2");
+                                    toastMessage("Unzipped File Successfully");
+
+                                    readExcel();
                                 } catch (IOException e1) {
                                     e1.printStackTrace();
                                 }
+
                             }
+
                         });
             }
         });
@@ -178,8 +183,6 @@ public class SignIn extends AppCompatActivity {
     public void toastMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
-
-
 
     /**
      * Unzip a zip file.  Will overwrite existing files.
@@ -219,7 +222,6 @@ public class SignIn extends AppCompatActivity {
                                 parentDir.mkdirs();
                             }
                         }
-
                         // unzip the file
                         FileOutputStream out = new FileOutputStream(unzipFile, false);
                         BufferedOutputStream fout = new BufferedOutputStream(out, BUFFER_SIZE);
@@ -227,7 +229,6 @@ public class SignIn extends AppCompatActivity {
                             while ((size = zin.read(buffer, 0, BUFFER_SIZE)) != -1) {
                                 fout.write(buffer, 0, size);
                             }
-
                             zin.closeEntry();
                         } finally {
                             fout.flush();
@@ -247,5 +248,25 @@ public class SignIn extends AppCompatActivity {
 
 
 
+    public void readExcel() throws IOException {
+            //https://www.callicoder.com/java-read-excel-file-apache-poi/
+            // Creating a Workbook from an Excel file (.xls or .xlsx)
+            //Workbook workbook = WorkbookFactory.create(new File(getFilesDir()+"/fetch2.xlsx"));
+
+            // Retrieving the number of sheets in the Workbook
+            //Log.d("Debug","Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+
+
+    }
+    public void readXML() {
+
+    }
+
+
 
 }
+
+
+
+
+
