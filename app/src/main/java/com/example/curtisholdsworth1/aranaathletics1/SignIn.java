@@ -2,48 +2,37 @@ package com.example.curtisholdsworth1.aranaathletics1;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 public class SignIn extends AppCompatActivity {
 
@@ -159,7 +148,7 @@ public class SignIn extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, NAMES);
         editText.setAdapter(adapter);
 
-        /*fetchData.setOnClickListener(new View.OnClickListener() {
+     /*   fetchData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Ion.with(getApplicationContext()).load("https://www.aranala.com.au/ipad/fetch2.php").asString()
@@ -188,39 +177,32 @@ public class SignIn extends AppCompatActivity {
         fetchData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
+                Ion.with(getApplicationContext())
+                        .load("https://www.aranala.com.au/ipad/fetch2.php")
+                        .progress(new ProgressCallback() {@Override
+                        public void onProgress(long downloaded, long total) {
+                            Log.d("Debug","" + downloaded + " / " + total);
+                        }
+                        })
+                        .write(new File(getFilesDir() + "/fetch2.zip"))
+                        .setCallback(new FutureCallback<File>() {
+                            @Override
+                            public void onCompleted(Exception e, File file) {
+                                try {
+                                    unzip(getFilesDir()+"/fetch2.zip",getFilesDir()+"/fetch2");
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                        });
             }
         });
+
     }
 
                 //Easy method to write a message to device screen.
     public void toastMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    public void save(String text) {
-
-        FileOutputStream fos = null;
-        try {
-            fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
-            fos.write(text.getBytes());
-            toastMessage("Saved to " + getFilesDir() + "/" + FILE_NAME);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
 
