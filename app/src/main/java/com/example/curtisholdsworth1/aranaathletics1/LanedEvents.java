@@ -84,9 +84,6 @@ public class LanedEvents extends AppCompatActivity {
 
         leftTextEntry.addTextChangedListener(inputWatcher);
 
-
-
-
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
