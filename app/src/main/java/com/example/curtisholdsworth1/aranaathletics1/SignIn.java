@@ -19,11 +19,24 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +62,8 @@ public class SignIn extends AppCompatActivity {
     private static final String[] NAMES = new String[]{
             "Curtis", "Nathan"
     };
+
+
 
 
     public List<AthleteSample> getList() {
@@ -114,6 +129,9 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
 
         Button goToLaned = (Button) findViewById(R.id.btnlaned);
         Button gotoUnlaned = (Button) findViewById(R.id.btnUnlaned);
@@ -166,9 +184,10 @@ public class SignIn extends AppCompatActivity {
                                 try {
                                     unzip(getFilesDir()+ File.separator+ "fetch2.xlsx",getFilesDir()+ File.separator+"fetch2");
                                     toastMessage("Unzipped File Successfully");
-
                                     readExcel();
                                 } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                } catch (InvalidFormatException e1) {
                                     e1.printStackTrace();
                                 }
 
@@ -248,22 +267,35 @@ public class SignIn extends AppCompatActivity {
 
 
 
-    public void readExcel() throws IOException {
+    public void readExcel() throws IOException, InvalidFormatException {
             //https://www.callicoder.com/java-read-excel-file-apache-poi/
             // Creating a Workbook from an Excel file (.xls or .xlsx)
-            //Workbook workbook = WorkbookFactory.create(new File(getFilesDir()+"/fetch2.xlsx"));
-
+            Workbook workbook = WorkbookFactory.create(new File(getFilesDir()+"/fetch2.xlsx"));
+            //toastMessage("Created Workbook");
             // Retrieving the number of sheets in the Workbook
-            //Log.d("Debug","Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+            Log.d("Debug","Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+            Log.d("Debug","Retrieving Sheets using for-each loop");
+            for(Sheet sheet: workbook) {
+                Log.d("Debug","=> " + sheet.getSheetName());
+            }
 
+        // Getting the Sheet at index zero
+        Sheet sheet = workbook.getSheetAt(0);
+
+        // Create a DataFormatter to format and get each cell's value as String
+        DataFormatter dataFormatter = new DataFormatter();
+
+        // use a for-each loop to iterate over the rows and columns
+        Log.d("Debug","\n\nIterating over Rows and Columns using for-each loop\n");
+        for (Row row: sheet) {
+            for(Cell cell: row) {
+                String cellValue = dataFormatter.formatCellValue(cell);
+                Log.d("Debug",cellValue + "\t");
+            }
+
+        }
 
     }
-    public void readXML() {
-
-    }
-
-
-
 }
 
 
