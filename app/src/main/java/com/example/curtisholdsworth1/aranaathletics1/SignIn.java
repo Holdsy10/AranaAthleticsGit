@@ -54,7 +54,7 @@ public class SignIn extends AppCompatActivity {
     private Button unlanedEvents;
     private Button lanedEvents;
     private Button admin;
-    static List<AthleteSample> athleteSamples = new ArrayList<>();
+    //static List<AthleteSample> athleteSamples = new ArrayList<>();
     private static final String FILE_NAME = "fetch2.zip";
     private static int BUFFER_SIZE = 6 * 1024;
     private static final String[] NAMES = new String[]{
@@ -63,9 +63,9 @@ public class SignIn extends AppCompatActivity {
 
 
 
-    public List<AthleteSample> getList() {
-        return athleteSamples;
-    }
+    //public List<AthleteSample> getList() {
+     //   return athleteSamples;
+    //}
 
     public void readAthletesData() {
         InputStream is = getResources().openRawResource(R.raw.athletes);
@@ -87,7 +87,7 @@ public class SignIn extends AppCompatActivity {
                 sample.setAthleteGender(tokens[3]);
                 sample.setAthleteParent(tokens[4]);
 
-                athleteSamples.add(sample);
+                //athleteSamples.add(sample);
 
                 Log.d("MyActivity", "Just created: " + sample);
 

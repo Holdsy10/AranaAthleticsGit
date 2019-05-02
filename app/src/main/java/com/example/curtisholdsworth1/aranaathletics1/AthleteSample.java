@@ -2,6 +2,7 @@ package com.example.curtisholdsworth1.aranaathletics1;
 
 class AthleteSample {
     private String athleteName;
+    private String athleteLastName;
     private String athleteNumber;
     private String athleteAge;
     private String athleteGender;
@@ -47,4 +48,10 @@ class AthleteSample {
         this.athleteParent = athleteParent;
     }
 
+    public String getAthleteLastName() {
+        return athleteLastName;
+    }
+    public void setAthleteLastName(String athleteLastName) {
+        this.athleteLastName = athleteLastName;
+    }
 }

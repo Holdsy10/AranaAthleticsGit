@@ -2,6 +2,7 @@ package com.example.curtisholdsworth1.aranaathletics1;
 
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,14 +26,22 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -40,6 +49,8 @@ import java.util.zip.ZipInputStream;
 public class Admin extends AppCompatActivity {
 
     private static int BUFFER_SIZE = 6 * 1024;
+    static List<AthleteSample> athleteSamples = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,27 +76,29 @@ public class Admin extends AppCompatActivity {
                             public void onCompleted(Exception e, File file) {
                                 try {
                                     unzip(getFilesDir() + File.separator + "fetch2.xlsx", getFilesDir() + File.separator + "fetch2");
-                                    toastMessage("Unzipped File Successfully");
+                                    //toastMessage("Unzipped File Successfully");
                                     //readExcel();
                                 } catch (IOException e1) {
                                     e1.printStackTrace();
                                 //} catch (InvalidFormatException e1) {
                                 //    e1.printStackTrace();
                                 }
-
-                                File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
-                                int sheetIdx = 0; // 0 for first sheet
-
-                                try {
-                                    convertSelectedSheetInXLXSFileToCSV(myFile, sheetIdx);
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-
                             }
-
                         });
+                File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
+                int sheetIdx = 0; // 0 for first sheet
+                try {
+                    convertSelectedSheetInXLXSFileToCSV(myFile, sheetIdx);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    readAthletesData();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
+
         });
     }
 
@@ -101,6 +114,7 @@ public class Admin extends AppCompatActivity {
      * @param location Full path of the directory you'd like to unzip to (will be created if it doesn't exist).
      * @throws IOException
      */
+
     public static void unzip(String zipFile, String location) throws IOException {
         int size;
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -179,10 +193,7 @@ public class Admin extends AppCompatActivity {
                 String cellValue = dataFormatter.formatCellValue(cell);
                 Log.d("Debug", cellValue + "\t");
             }
-
         }
-
-
     }
 
     private void convertSelectedSheetInXLXSFileToCSV(File xlsxFile, int sheetIdx) throws Exception {
@@ -192,7 +203,7 @@ public class Admin extends AppCompatActivity {
         // Open the xlsx and get the requested sheet from the workbook
         XSSFWorkbook workBook = new XSSFWorkbook(fileInStream);
         XSSFSheet selSheet = workBook.getSheetAt(sheetIdx);
-
+        BufferedWriter bwr = new BufferedWriter(new FileWriter(new File(getFilesDir()+File.separator+"fetch2.csv")));
         // Iterate through all the rows in the selected sheet
         Iterator<Row> rowIterator = selSheet.iterator();
         while (rowIterator.hasNext()) {
@@ -203,14 +214,13 @@ public class Admin extends AppCompatActivity {
             // separated string
             Iterator<Cell> cellIterator = row.cellIterator();
             StringBuffer sb = new StringBuffer();
+            String[] tokens;
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
                 if (sb.length() != 0) {
                     sb.append(",");
                 }
 
-                // If you are using poi 4.0 or over, change it to
-                // cell.getCellType
                 switch (cell.getCellTypeEnum()) {
                     case STRING:
                         sb.append(cell.getStringCellValue());
@@ -226,8 +236,48 @@ public class Admin extends AppCompatActivity {
             }
             System.out.println(sb.toString());
 
+            /*
+             * To write contents of StringBuffer to a file, use
+             * BufferedWriter class.
+             */
+            //write contents of StringBuffer to a file
+            bwr.write(sb.toString());
+            bwr.newLine();
         }
+        //flush the stream
+        bwr.flush();
+        //close the stream
+        bwr.close();
         workBook.close();
+    }
+
+    public void readAthletesData() throws IOException{
+        BufferedReader reader = new BufferedReader(new FileReader(getFilesDir()+File.separator+"fetch2.csv"));
+        String line = "";
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                AthleteSample sample = new AthleteSample();
+                String[] tokens = line.split(",");
+                sample.setAthleteName(tokens[1]+" "+tokens[2]);
+                sample.setAthleteNumber(tokens[0]);
+                sample.setAthleteAge(tokens[4]);
+                sample.setAthleteGender(tokens[6]);
+
+                athleteSamples.add(sample);
+
+            }
+        } catch (IOException e) {
+            Log.wtf("MyActivity", "Error Reading Data File on Line " + line, e);
+            e.printStackTrace();
+        }
+
+
+        toastMessage("Athletes Imported!");
+    }
+
+    public static List<AthleteSample> getList() {
+        return athleteSamples;
     }
 
 

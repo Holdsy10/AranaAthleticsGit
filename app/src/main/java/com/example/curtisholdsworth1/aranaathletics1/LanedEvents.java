@@ -50,6 +50,7 @@ public class LanedEvents extends AppCompatActivity {
     int race = 1;
     private SignIn signin;
     private Button prevButton;
+    private Admin admin;
 
     List<AthleteSample> athleteSamples = new ArrayList<>();
 
@@ -65,10 +66,11 @@ public class LanedEvents extends AppCompatActivity {
         setupUIViews();
         leftKeypad();
         //updateRace();
-        signin = new SignIn();
-        athleteSamples = signin.getList();
+        //signin = new SignIn();
+        admin = new Admin();
+        athleteSamples = Admin.getList();
 
-        Button goToSignIn = (Button) findViewById(R.id.exitButton);
+        Button goToSignIn = findViewById(R.id.exitButton);
 
 
         goToSignIn.setOnClickListener(new View.OnClickListener() {
@@ -300,6 +302,7 @@ public class LanedEvents extends AppCompatActivity {
         } catch (NumberFormatException e) {
         }
     }
+
 
     private void showAthleteData() {
         String leftInput = leftTextEntry.getText().toString();
