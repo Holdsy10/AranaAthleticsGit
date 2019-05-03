@@ -3,6 +3,7 @@ package com.example.curtisholdsworth1.aranaathletics1;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,8 +49,8 @@ import java.util.zip.ZipInputStream;
 
 public class Admin extends AppCompatActivity {
 
-    private static int BUFFER_SIZE = 6 * 1024;
-    static List<AthleteSample> athleteSamples = new ArrayList<>();
+    private static int BUFFER_SIZE = 1024;
+    //public static List<AthleteSample> athleteSamples = new ArrayList<>();
 
 
     @Override
@@ -70,11 +71,11 @@ public class Admin extends AppCompatActivity {
                                 Log.d("Debug", "" + downloaded + " / " + total);
                             }
                         })
-                        .write(new File(getFilesDir() + File.separator + "fetch2.xlsx"))
-                        .setCallback(new FutureCallback<File>() {
-                            @Override
-                            public void onCompleted(Exception e, File file) {
-                                try {
+                        .write(new File(getFilesDir() + File.separator + "fetch2.xlsx"));
+                   //     .setCallback(new FutureCallback<File>() {
+                    //        @Override
+                     //       public void onCompleted(Exception e, File file) {
+                                /*try {
                                     unzip(getFilesDir() + File.separator + "fetch2.xlsx", getFilesDir() + File.separator + "fetch2");
                                     //toastMessage("Unzipped File Successfully");
                                     //readExcel();
@@ -82,21 +83,36 @@ public class Admin extends AppCompatActivity {
                                     e1.printStackTrace();
                                 //} catch (InvalidFormatException e1) {
                                 //    e1.printStackTrace();
-                                }
-                            }
-                        });
-                File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
-                int sheetIdx = 0; // 0 for first sheet
-                try {
-                    convertSelectedSheetInXLXSFileToCSV(myFile, sheetIdx);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-                try {
-                    readAthletesData();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+                                }*/
+                       //     }
+                    //    });
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
+                        int sheetIdx = 0; // 0 for first sheet
+                        try {
+                            convertSelectedSheetInXLXSFileToCSV(myFile, sheetIdx);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }, 1000);
+
+                final Handler handler2 = new Handler();
+                handler2.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            readAthletesData();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }, 1000);
+
             }
 
         });
@@ -198,29 +214,35 @@ public class Admin extends AppCompatActivity {
 
     private void convertSelectedSheetInXLXSFileToCSV(File xlsxFile, int sheetIdx) throws Exception {
 
+        List<AthleteSample> athleteSamples = new ArrayList<>();
+        File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
+
+        //int sheetIdx = 0; // 0 for first sheet
         FileInputStream fileInStream = new FileInputStream(xlsxFile);
         AthleteSample sample = new AthleteSample();
+
         // Open the xlsx and get the requested sheet from the workbook
         XSSFWorkbook workBook = new XSSFWorkbook(fileInStream);
         XSSFSheet selSheet = workBook.getSheetAt(sheetIdx);
         BufferedWriter bwr = new BufferedWriter(new FileWriter(new File(getFilesDir()+File.separator+"fetch2.csv")));
+        StringBuilder sb = new StringBuilder();
+
         // Iterate through all the rows in the selected sheet
         Iterator<Row> rowIterator = selSheet.iterator();
         while (rowIterator.hasNext()) {
-
             Row row = rowIterator.next();
 
             // Iterate through all the columns in the row and build ","
             // separated string
             Iterator<Cell> cellIterator = row.cellIterator();
-            StringBuffer sb = new StringBuffer();
-            String[] tokens;
+            sb.setLength(0); //THIS LINE IS LEAK
+
+            //StringBuilder sb = new StringBuilder();
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
                 if (sb.length() != 0) {
                     sb.append(",");
                 }
-
                 switch (cell.getCellTypeEnum()) {
                     case STRING:
                         sb.append(cell.getStringCellValue());
@@ -234,51 +256,51 @@ public class Admin extends AppCompatActivity {
                     default:
                 }
             }
-            System.out.println(sb.toString());
-
+            //System.out.println(sb.toString());
             /*
              * To write contents of StringBuffer to a file, use
              * BufferedWriter class.
              */
             //write contents of StringBuffer to a file
-            bwr.write(sb.toString());
-            bwr.newLine();
+            //bwr.write(sb.toString());
+            //bwr.newLine();
         }
         //flush the stream
         bwr.flush();
         //close the stream
         bwr.close();
         workBook.close();
+        Log.d("Debug","Database Downloaded Successfully");
     }
 
     public void readAthletesData() throws IOException{
         BufferedReader reader = new BufferedReader(new FileReader(getFilesDir()+File.separator+"fetch2.csv"));
         String line = "";
+        AthleteSample sample = new AthleteSample();
 
         try {
             while ((line = reader.readLine()) != null) {
-                AthleteSample sample = new AthleteSample();
+
                 String[] tokens = line.split(",");
                 sample.setAthleteName(tokens[1]+" "+tokens[2]);
                 sample.setAthleteNumber(tokens[0]);
                 sample.setAthleteAge(tokens[4]);
                 sample.setAthleteGender(tokens[6]);
 
-                athleteSamples.add(sample);
+                //athleteSamples.add(sample);
 
             }
         } catch (IOException e) {
             Log.wtf("MyActivity", "Error Reading Data File on Line " + line, e);
             e.printStackTrace();
         }
-
-
         toastMessage("Athletes Imported!");
+        //return athleteSamples;
     }
 
-    public static List<AthleteSample> getList() {
-        return athleteSamples;
-    }
+    //public List<AthleteSample> getList() {
+        //return athleteSamples;
+    //}
 
 
 

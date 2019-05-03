@@ -68,8 +68,8 @@ public class LanedEvents extends AppCompatActivity {
         //updateRace();
         //signin = new SignIn();
         admin = new Admin();
-        athleteSamples = Admin.getList();
-
+        //List<AthleteSample> getAthletes = admin.getList();
+       // athleteSamples = getAthletes;
         Button goToSignIn = findViewById(R.id.exitButton);
 
 
