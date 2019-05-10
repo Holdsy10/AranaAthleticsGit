@@ -1,5 +1,6 @@
 package com.example.curtisholdsworth1.aranaathletics1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -57,49 +58,13 @@ public class SignIn extends AppCompatActivity {
     //static List<AthleteSample> athleteSamples = new ArrayList<>();
     private static final String FILE_NAME = "fetch2.zip";
     private static int BUFFER_SIZE = 6 * 1024;
-    private static final String[] NAMES = new String[]{
-            "Curtis", "Nathan"
-    };
 
 
 
-    //public List<AthleteSample> getList() {
-     //   return athleteSamples;
-    //}
+    private Admin adminData;
 
-    public void readAthletesData() {
-        InputStream is = getResources().openRawResource(R.raw.athletes);
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, Charset.forName("UTF-8"))
-        );
+    List<AthleteSample> athleteSamples = new ArrayList<>();
 
-        String line = "";
-        try {
-            while ((line = reader.readLine()) != null) {
-                String[] tokens = line.split(",");
-
-                AthleteSample sample = new AthleteSample();
-                sample.setAthleteName(tokens[0]);
-                //sample.setAthleteNumber(Integer.parseInt(tokens[1]));
-                //sample.setAthleteAge(Integer.parseInt(tokens[2]));
-                sample.setAthleteNumber(tokens[1]);
-                sample.setAthleteAge(tokens[2]);
-                sample.setAthleteGender(tokens[3]);
-                sample.setAthleteParent(tokens[4]);
-
-                //athleteSamples.add(sample);
-
-                Log.d("MyActivity", "Just created: " + sample);
-
-
-            }
-        } catch (IOException e) {
-            Log.wtf("MyActivity", "Error Reading Data File on Line " + line, e);
-            e.printStackTrace();
-        }
-
-
-    }
 
 
     private TextWatcher parentsTextWatcher = new TextWatcher() {
@@ -125,7 +90,6 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
@@ -141,7 +105,18 @@ public class SignIn extends AppCompatActivity {
         unlanedEvents = findViewById(R.id.btnUnlaned);
         admin = findViewById(R.id.btnAdmin);
 
-        //readAthletesData();
+        adminData = new Admin();
+        athleteSamples = adminData.getList();
+
+
+        //Read old Athlete Data if exists on device.
+        try {
+            getOldAthlete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
         goToAdmin.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -167,14 +142,55 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        AutoCompleteTextView editText = findViewById(R.id.autoParentName);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, NAMES);
-        editText.setAdapter(adapter);
+        autoComplete();
+
+
 
     }
+
+
                 //Easy method to write a message to device screen.
     public void toastMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    //Get Old Athlete Information if still on device
+    public void getOldAthlete() throws IOException {
+        adminData.readAthletesData(SignIn.this);
+
+    }
+
+    private static final String[] NAMES = new String[]{
+            "Curtis", "Nathan"
+    };
+
+    //Method to grab parents names so they can appear when singing in.
+    private void autoComplete() {
+
+        List<String> parentNames = new ArrayList<>();
+        parentNames.clear();
+
+        for (int i = 0; i < athleteSamples.size();i++) {
+            //Checks for same parent with multiple entries in database to prevent duplicates when singing in.
+            if (!parentNames.contains(athleteSamples.get(i).getParent1Name())) {
+                parentNames.add(athleteSamples.get(i).getParent1Name());
+            }
+
+            //If no second parents in database, will not add to arraylist
+            //as it can't have any null entries.
+            if (!parentNames.contains(athleteSamples.get(i).getParent2Name())
+                   && athleteSamples.get(i).getParent2Name() != null) {
+                parentNames.add(athleteSamples.get(i).getParent2Name());
+            }
+        }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, parentNames);
+
+            AutoCompleteTextView acTextView = findViewById(R.id.autoParentName);
+            acTextView.setThreshold(1);
+            acTextView.setAdapter(adapter);
+
+
     }
 }
 
