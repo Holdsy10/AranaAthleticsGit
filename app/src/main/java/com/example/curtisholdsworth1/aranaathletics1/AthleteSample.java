@@ -40,18 +40,5 @@ class AthleteSample {
         this.athleteGender = athleteGender;
     }
 
-    public String getAthleteParent() {
-        return athleteParent;
-    }
 
-    public void setAthleteParent(String athleteParent) {
-        this.athleteParent = athleteParent;
-    }
-
-    public String getAthleteLastName() {
-        return athleteLastName;
-    }
-    public void setAthleteLastName(String athleteLastName) {
-        this.athleteLastName = athleteLastName;
-    }
 }
