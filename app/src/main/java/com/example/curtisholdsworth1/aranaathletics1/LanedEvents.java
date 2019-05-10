@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +27,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class LanedEvents extends AppCompatActivity {
+public class LanedEvents extends AppCompatActivity  {
 
+    //Left Side Buttons
     private Button left1;
     private Button left2;
     private Button left3;
@@ -43,17 +46,38 @@ public class LanedEvents extends AppCompatActivity {
     private TextView leftAthlete;
     private Button leftTrialist;
     private Button leftNoRunner;
+
+    //Right Side Buttons
+    private Button right1;
+    private Button right2;
+    private Button right3;
+    private Button right4;
+    private Button right5;
+    private Button right6;
+    private Button right7;
+    private Button right8;
+    private Button right9;
+    private Button right0;
+    private Button rightComma;
+    private TextView rightTextEntry;
+    private Button rightDelete;
+    private TextView rightAthlete;
+    private Button rightTrialist;
+    private Button rightNoRunner;
+
+    //Other Buttons
     private Button exitButton;
     private LanedEvents SignIn;
     private Button nextButton;
     private TextView raceNumber;
-    int race = 1;
+
     private SignIn signin;
     private Button prevButton;
     private Admin admin;
 
+    //Race Variable
+    int race = 1;
     List<AthleteSample> athleteSamples = new ArrayList<>();
-
 
 
     @Override
@@ -65,13 +89,11 @@ public class LanedEvents extends AppCompatActivity {
 
         setupUIViews();
         leftKeypad();
-        //updateRace();
-        //signin = new SignIn();
-        admin = new Admin();
-        //List<AthleteSample> getAthletes = admin.getList();
-       // athleteSamples = getAthletes;
+        rightKeypad();
         Button goToSignIn = findViewById(R.id.exitButton);
 
+        admin = new Admin();
+        athleteSamples = admin.getList();
 
         goToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +107,7 @@ public class LanedEvents extends AppCompatActivity {
 
 
         leftTextEntry.addTextChangedListener(inputWatcher);
+        rightTextEntry.addTextChangedListener(inputWatcher);
 
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -126,8 +149,97 @@ public class LanedEvents extends AppCompatActivity {
 
 
     }
+    private void rightKeypad() {
+        right0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right0));
+            }
+        });
 
-
+        right1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right1));
+            }
+        });
+        right2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right2));
+            }
+        });
+        right3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right3));
+            }
+        });
+        right4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right4));
+            }
+        });
+        right5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right5));
+            }
+        });
+        right6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right6));
+            }
+        });
+        right7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right7));
+            }
+        });
+        right8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right8));
+            }
+        });
+        right9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.right9));
+            }
+        });
+        rightTrialist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + "T");
+            }
+        });
+        rightComma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + getString(R.string.rightComma));
+            }
+        });
+        rightNoRunner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rightTextEntry.setText(rightTextEntry.getText().toString() + "-");
+            }
+        });
+        rightDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String entry = rightTextEntry.getText().toString();
+                int input = rightTextEntry.length();
+                if (input > 0) {
+                    rightTextEntry.setText(entry.substring(0, input-1));
+                }
+            }
+        });
+    }
 
 
 
@@ -223,7 +335,112 @@ public class LanedEvents extends AppCompatActivity {
         });
     }
 
-    private void updateKeypad() {
+
+    private void updateRightKeypad() {
+        try {
+
+
+            String rightInput = rightTextEntry.getText().toString();
+            int input = rightTextEntry.length();
+
+            //Normal Entry
+            //123
+            if (rightInput.length() > 3 && !rightInput.contains(",") && !rightInput.startsWith("0")) {
+                rightTextEntry.setText(rightInput.substring(0, input - 1));
+            }
+            //123,123
+            if (rightInput.length() > 7 && rightInput.contains(",") && !rightInput.startsWith("0") && !rightInput.contains(",0")){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+            //123,0123
+            if (rightInput.length() > 8 && !rightInput.startsWith(("0")) && rightInput.contains(",0")){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+
+
+            // Runner is From Another Club
+            if (rightInput.length() > 4 && rightInput.substring(0, 1).equals("0") && !rightInput.contains(",")) {
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+            if (rightInput.length() > 9 && rightInput.startsWith(("0")) && rightInput.contains(",0") ){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+            if (rightInput.length() > 8 && rightInput.startsWith(("0")) && !rightInput.contains(",0") ){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+
+
+            // If Trialist, Next input has to be comma.
+            if (rightInput.equals("T")) {
+                rightAthlete.setText("Trialist");
+            }
+            if (rightInput.length() > 5 && rightInput.contains("T,") && !rightInput.contains(",0")){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+            if (rightInput.length() > 6 && rightInput.contains("T,") && rightInput.contains(",0")){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+            if (rightInput.startsWith("T") && rightInput.length() > 1 && !rightInput.contains(",")){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+
+            // Double input on accident
+            if (rightInput.contains(",,") || rightInput.contains("TT") || rightInput.contains("--") || rightInput.contains("T-") ||
+                    rightInput.contains("-T") || rightInput.contains(",-")|| rightInput.contains("-,") || rightInput.contains(",T,")) {
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+
+            // If there is no runner
+            if (rightInput.startsWith("-") && rightInput.length() > 1) {
+
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+            //if comma is first input
+            if (rightInput.startsWith(",")){
+                rightTextEntry.setText(rightInput.substring(0, input-1));
+            }
+
+            if (rightInput.length() == 0){
+                rightAthlete.setText("");
+            }
+
+            if (rightInput.contains(",")) {
+                int comma = 0;
+                comma++;
+                if (comma == 2) {
+                    rightTextEntry.setText(rightInput.substring(0, input - 1));
+                }
+            }
+
+        } catch (NumberFormatException e) {
+        }
+    }
+
+    private void updateLeftKeypad2() {
+        try {
+
+
+
+
+            for (int i = 0; i<athleteSamples.size(); i++) {
+
+                int input = leftTextEntry.length();
+                String leftInput = leftTextEntry.getText().toString();
+
+                if (leftInput.length()>=1 && leftInput.equals(athleteSamples.get(i).getAthleteNumber())){
+                    leftAthlete.setText(athleteSamples.get(i).getAthleteName());
+                }
+                else if (!leftInput.equals(athleteSamples.get(i).getAthleteNumber())){
+                    //leftTextEntry.setText(leftInput.substring(0, input-1));
+
+            }
+            }
+
+        } catch (NumberFormatException e) {
+        }
+    }
+
+    private void updateLeftKeypad() {
         try {
 
 
@@ -277,6 +494,8 @@ public class LanedEvents extends AppCompatActivity {
                 leftTextEntry.setText(leftInput.substring(0, input-1));
             }
 
+
+
             // If there is no runner
             if (leftInput.startsWith("-") && leftInput.length() > 1) {
 
@@ -299,27 +518,74 @@ public class LanedEvents extends AppCompatActivity {
                 }
             }
 
+
         } catch (NumberFormatException e) {
         }
     }
 
 
-    private void showAthleteData() {
+    private void showLeftAthleteData() {
         String leftInput = leftTextEntry.getText().toString();
         for (int i=0; i <athleteSamples.size(); i++) {
             for (int j=0; j <athleteSamples.size(); j++) {
+
+                // For Single Athlete Crossing Finish Line
                 if (leftInput.equals(athleteSamples.get(i).getAthleteNumber())) {
                     leftAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender());
-                } else if (leftInput.equals(athleteSamples.get(i).getAthleteNumber()+ "," + athleteSamples.get(j).getAthleteNumber())) {
+                }
+
+                //For 2 athletes crossing in the same lane
+                else if (leftInput.equals(athleteSamples.get(i).getAthleteNumber()+ "," + athleteSamples.get(j).getAthleteNumber())) {
                     leftAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender()
                             +"\n"+ athleteSamples.get(j).getAthleteName() + " " + athleteSamples.get(j).getAthleteAge() + " " + athleteSamples.get(j).getAthleteGender());
-                } else if (leftInput.equals(athleteSamples.get(i).getAthleteNumber()+ ",T")) {
+                }
+
+                //For 2 Athletes crossing in the same lane but first athlete is a Trialist
+                else if (leftInput.equals("T,"+athleteSamples.get(i).getAthleteNumber())) {
+                    leftAthlete.setText("Trialist\n"
+                            +athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender());
+                }
+
+                //For 2 Athletes crossing in the same lane but second athlete is a Trialist
+                else if (leftInput.equals(athleteSamples.get(i).getAthleteNumber()+ ",T")) {
                     leftAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender()
                             +"\nTrialist");
-
+                }
             }
         }
-    } }
+    }
+
+    private void showRightAthleteData() {
+        String rightInput = rightTextEntry.getText().toString();
+        for (int i=0; i <athleteSamples.size(); i++) {
+            for (int j=0; j <athleteSamples.size(); j++) {
+
+                // For Single Athlete Crossing Finish Line
+                if (rightInput.equals(athleteSamples.get(i).getAthleteNumber())) {
+                    rightAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender());
+                }
+
+                //For 2 athletes crossing in the same lane
+                else if (rightInput.equals(athleteSamples.get(i).getAthleteNumber()+ "," + athleteSamples.get(j).getAthleteNumber())) {
+                    rightAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender()
+                            +"\n"+ athleteSamples.get(j).getAthleteName() + " " + athleteSamples.get(j).getAthleteAge() + " " + athleteSamples.get(j).getAthleteGender());
+                }
+
+                //For 2 Athletes crossing in the same lane but first athlete is a Trialist
+                else if (rightInput.equals("T,"+athleteSamples.get(i).getAthleteNumber())) {
+                    rightAthlete.setText("Trialist\n"
+                            +athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender());
+                }
+
+                //For 2 Athletes crossing in the same lane but second athlete is a Trialist
+                else if (rightInput.equals(athleteSamples.get(i).getAthleteNumber()+ ",T")) {
+                    rightAthlete.setText(athleteSamples.get(i).getAthleteName() + " " + athleteSamples.get(i).getAthleteAge() + " " + athleteSamples.get(i).getAthleteGender()
+                            +"\nTrialist");
+                }
+            }
+        }
+    }
+
 
     private TextWatcher inputWatcher = new TextWatcher() {
         @Override
@@ -329,12 +595,16 @@ public class LanedEvents extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            updateKeypad();
+            updateLeftKeypad();
+            //updateLeftKeypad2();
+            updateRightKeypad();
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            showAthleteData();
+            //updateLeftKeypad2();
+            showLeftAthleteData();
+            showRightAthleteData();
             }
 
 
@@ -343,28 +613,54 @@ public class LanedEvents extends AppCompatActivity {
 
 
     private void setupUIViews () {
-                left0 = (Button) findViewById(R.id.left0);
-                left1 = (Button) findViewById(R.id.left1);
-                left2 = (Button) findViewById(R.id.left2);
-                left3 = (Button) findViewById(R.id.left3);
-                left4 = (Button) findViewById(R.id.left4);
-                left5 = (Button) findViewById(R.id.left5);
-                left6 = (Button) findViewById(R.id.left6);
-                left7 = (Button) findViewById(R.id.left7);
-                left8 = (Button) findViewById(R.id.left8);
-                left9 = (Button) findViewById(R.id.left9);
-                leftComma = (Button) findViewById(R.id.leftComma);
-                leftDelete = (Button) findViewById(R.id.leftDelete);
-                leftTextEntry = (TextView) findViewById(R.id.leftTextEntry);
-                leftAthlete = (TextView) findViewById(R.id.leftAthlete);
-                leftTrialist = (Button) findViewById(R.id.leftTrialist);
-                leftNoRunner = (Button) findViewById(R.id.leftNoRunner);
-                Button goToSignIn = (Button) findViewById(R.id.exitButton);
-                nextButton = (Button) findViewById(R.id.nextButton);
-                raceNumber = (TextView) findViewById(R.id.raceNumber);
-                prevButton = (Button) findViewById(R.id.prevButton);
-                // Put more here
+        //Left Side Entry
+        left0 = findViewById(R.id.left0);
+        left1 = findViewById(R.id.left1);
+        left2 = findViewById(R.id.left2);
+        left3 = findViewById(R.id.left3);
+        left4 = findViewById(R.id.left4);
+        left5 = findViewById(R.id.left5);
+        left6 = findViewById(R.id.left6);
+        left7 = findViewById(R.id.left7);
+        left8 = findViewById(R.id.left8);
+        left9 = findViewById(R.id.left9);
+        leftComma = findViewById(R.id.leftComma);
+        leftDelete = findViewById(R.id.leftDelete);
+        leftTextEntry = findViewById(R.id.leftTextEntry);
+        leftAthlete = findViewById(R.id.leftAthlete);
+        leftTrialist = findViewById(R.id.leftTrialist);
+        leftNoRunner = findViewById(R.id.leftNoRunner);
+
+        //Extra Buttons
+        Button goToSignIn = findViewById(R.id.exitButton);
+        nextButton = findViewById(R.id.nextButton);
+        raceNumber = findViewById(R.id.raceNumber);
+        prevButton = findViewById(R.id.prevButton);
+
+        // Right Side Entry
+        right0 = findViewById(R.id.right0);
+        right1 = findViewById(R.id.right1);
+        right2 = findViewById(R.id.right2);
+        right3 = findViewById(R.id.right3);
+        right4 = findViewById(R.id.right4);
+        right5 = findViewById(R.id.right5);
+        right6 = findViewById(R.id.right6);
+        right7 = findViewById(R.id.right7);
+        right8 = findViewById(R.id.right8);
+        right9 = findViewById(R.id.right9);
+        rightComma = findViewById(R.id.rightComma);
+        rightDelete = findViewById(R.id.rightDelete);
+        rightTextEntry = findViewById(R.id.rightTextEntry);
+        rightAthlete = findViewById(R.id.rightAthlete);
+        rightTrialist = findViewById(R.id.rightTrialist);
+        rightNoRunner = findViewById(R.id.rightNoRunner);
+
+
             }
 
-        }
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+}
 
