@@ -10,13 +10,17 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,7 +31,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class LanedEvents extends AppCompatActivity  {
+public class LanedEvents extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     //Left Side Buttons
     private Button left1;
@@ -78,6 +82,9 @@ public class LanedEvents extends AppCompatActivity  {
     //Race Variable
     int race = 1;
     List<AthleteSample> athleteSamples = new ArrayList<>();
+    List<resultList> resultList = new ArrayList<>();
+    String raceDistance;
+    String raceType = "Laned";
 
 
     @Override
@@ -112,8 +119,10 @@ public class LanedEvents extends AppCompatActivity  {
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                setResults(race);
                 race++;
-                raceNumber.setText("Race " + String.valueOf(race));
+                raceNumber.setText("Race " + race);
+
             }
         });
 
@@ -122,7 +131,9 @@ public class LanedEvents extends AppCompatActivity  {
             public void onClick(View v) {
                 if (race >=2) {
                     race--;
-                raceNumber.setText("Race " + String.valueOf(race));
+                    raceNumber.setText("Race " +race);
+                    getResults(race);
+
             }
         }
         });
@@ -586,6 +597,43 @@ public class LanedEvents extends AppCompatActivity  {
         }
     }
 
+    public List setResults(Integer raceNumber) {
+        String line = "";
+
+
+
+                resultList results = new resultList();
+
+                String[] tokens;
+
+                results.setRaceNumber(race);
+                results.setRaceDistance(raceDistance);
+                results.setRaceType(raceType);
+                results.setLane1AthleteNumber(leftTextEntry.getText().toString());
+                results.setLane2AthleteNumber(rightTextEntry.getText().toString());
+
+                Log.d("Results",results.toString());
+                resultList.add(results);
+
+
+                leftTextEntry.setText("");
+                rightTextEntry.setText("");
+
+        return resultList;
+    }
+
+    public List getResults(Integer raceNumber) {
+        resultList results = new resultList();
+
+                Log.d("Results",Integer.toString(raceNumber));
+
+
+                leftTextEntry.setText(resultList.get(1).getLane1AthleteNumber());
+                rightTextEntry.setText(resultList.get(1).getLane2AthleteNumber());
+
+
+        return resultList;
+    }
 
     private TextWatcher inputWatcher = new TextWatcher() {
         @Override
@@ -598,6 +646,7 @@ public class LanedEvents extends AppCompatActivity  {
             updateLeftKeypad();
             //updateLeftKeypad2();
             updateRightKeypad();
+
         }
 
         @Override
@@ -605,6 +654,7 @@ public class LanedEvents extends AppCompatActivity  {
             //updateLeftKeypad2();
             showLeftAthleteData();
             showRightAthleteData();
+
             }
 
 
@@ -637,6 +687,13 @@ public class LanedEvents extends AppCompatActivity  {
         raceNumber = findViewById(R.id.raceNumber);
         prevButton = findViewById(R.id.prevButton);
 
+        //Race Distance
+        Spinner spinner = findViewById(R.id.raceDistance);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.numbers,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
         // Right Side Entry
         right0 = findViewById(R.id.right0);
         right1 = findViewById(R.id.right1);
@@ -658,8 +715,22 @@ public class LanedEvents extends AppCompatActivity  {
 
             }
 
+
+
+
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        raceDistance = parent.getItemAtPosition(position).toString();
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 }
