@@ -82,10 +82,10 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
     //Race Variable
     int race = 1;
     List<AthleteSample> athleteSamples = new ArrayList<>();
-    List<resultList> resultList = new ArrayList<>();
+    List<resultList> resultLists = new ArrayList<>();
     String raceDistance;
     String raceType = "Laned";
-
+    int raceID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +119,7 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                setResults(race);
+                //setResults(race);
                 race++;
                 raceNumber.setText("Race " + race);
 
@@ -598,28 +598,28 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
     }
 
     public List setResults(Integer raceNumber) {
-        String line = "";
 
 
 
-                resultList results = new resultList();
 
-                String[] tokens;
+            resultList results = new resultList();
 
-                results.setRaceNumber(race);
-                results.setRaceDistance(raceDistance);
-                results.setRaceType(raceType);
-                results.setLane1AthleteNumber(leftTextEntry.getText().toString());
-                results.setLane2AthleteNumber(rightTextEntry.getText().toString());
+            results.setRaceNumber(raceNumber);
+            results.setRaceDistance(raceDistance);
+            results.setRaceType(raceType);
+            results.setLane1AthleteNumber(leftTextEntry.getText().toString());
+            results.setLane2AthleteNumber(rightTextEntry.getText().toString());
 
-                Log.d("Results",results.toString());
-                resultList.add(results);
+            Log.d("Results", results.getRaceNumber().toString());
 
 
-                leftTextEntry.setText("");
-                rightTextEntry.setText("");
+            resultLists.add(results);
+       // }
+            leftTextEntry.setText("");
+            rightTextEntry.setText("");
 
-        return resultList;
+
+        return resultLists;
     }
 
     public List getResults(Integer raceNumber) {
@@ -628,11 +628,11 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
                 Log.d("Results",Integer.toString(raceNumber));
 
 
-                leftTextEntry.setText(resultList.get(1).getLane1AthleteNumber());
-                rightTextEntry.setText(resultList.get(1).getLane2AthleteNumber());
+                leftTextEntry.setText(resultLists.get(raceNumber).getLane1AthleteNumber());
+                rightTextEntry.setText(resultLists.get(raceNumber).getLane2AthleteNumber());
 
 
-        return resultList;
+        return resultLists;
     }
 
     private TextWatcher inputWatcher = new TextWatcher() {
