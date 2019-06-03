@@ -541,16 +541,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prevButton" />
 
-    <TextView
+    <Spinner
         android:id="@+id/raceDistance"
         android:layout_width="318dp"
         android:layout_height="53dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="15dp"
-        android:text="@string/raceDistance"
         android:textColor="@android:color/black"
-        android:textSize="30sp"
+        android:textSize="90sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

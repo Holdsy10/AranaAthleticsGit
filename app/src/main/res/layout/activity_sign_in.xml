@@ -9,22 +9,22 @@
 
     <Button
         android:id="@+id/btnlaned"
-        android:layout_width="384dp"
-        android:layout_height="63dp"
+        android:layout_width="437dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="148dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="8dp"
         android:text="@string/Laned"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/autoParentName" />
 
     <Button
         android:id="@+id/btnUnlaned"
-        android:layout_width="378dp"
-        android:layout_height="66dp"
+        android:layout_width="437dp"
+        android:layout_height="77dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -33,15 +33,15 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnlaned"
-        app:layout_constraintVertical_bias="0.582" />
+        app:layout_constraintVertical_bias="0.55" />
 
     <AutoCompleteTextView
         android:id="@+id/autoParentName"
-        android:layout_width="378dp"
-        android:layout_height="55dp"
+        android:layout_width="450dp"
+        android:layout_height="122dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="180dp"
         android:layout_marginEnd="8dp"
@@ -57,8 +57,8 @@
 
     <Button
         android:id="@+id/btnAdmin"
-        android:layout_width="112dp"
-        android:layout_height="65dp"
+        android:layout_width="221dp"
+        android:layout_height="59dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:text="Admin Page"

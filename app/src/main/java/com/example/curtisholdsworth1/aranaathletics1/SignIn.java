@@ -13,60 +13,32 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
-
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
-
-
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
+/**
+ * SignIn Class for the SignIn Activity
+ */
 public class SignIn extends AppCompatActivity {
 
 
+    //Declarations
     private EditText parentsName;
     private Button unlanedEvents;
     private Button lanedEvents;
     private Button admin;
-    //static List<AthleteSample> athleteSamples = new ArrayList<>();
-    private static final String FILE_NAME = "fetch2.zip";
-    private static int BUFFER_SIZE = 6 * 1024;
-
-
-
     private Admin adminData;
 
+    //Creates athleteSamples arraylist
     List<AthleteSample> athleteSamples = new ArrayList<>();
 
 
-
+    /**
+     *Creates a textwatcher for the Parents name EditText to update
+     * with parents names from database.
+     */
     private TextWatcher parentsTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -90,22 +62,30 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        Log.d("Navigate Activity","Sign In Activity Started");
+
+        //Modifies System Properties so Apache POI can work with Android Studio
         System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl");
 
+        //Button declarations
         Button goToLaned = (Button) findViewById(R.id.btnlaned);
         Button gotoUnlaned = (Button) findViewById(R.id.btnUnlaned);
         final Button goToAdmin = (Button) findViewById(R.id.btnAdmin);
 
+
         parentsName = findViewById(R.id.autoParentName);
         parentsName.addTextChangedListener(parentsTextWatcher);
-
         lanedEvents = findViewById(R.id.btnlaned);
         unlanedEvents = findViewById(R.id.btnUnlaned);
         admin = findViewById(R.id.btnAdmin);
 
+        //Creates new instance of Admin
         adminData = new Admin();
+
+        //Gets the athletes information list and sends to athleteSamples
         athleteSamples = adminData.getList();
 
 
@@ -116,8 +96,7 @@ public class SignIn extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-
+        //Goes to Admin Activity when button is pressed
         goToAdmin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -126,6 +105,7 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
+        //Goes to the laned activity when button is pressed
         goToLaned.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,6 +114,7 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
+        //Goes to unlaned when button is pressed
         gotoUnlaned.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,36 +123,44 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
+        //Reads parents names for entry.
         autoComplete();
-
-
-
     }
 
 
-                //Easy method to write a message to device screen.
+    /**
+     * Writes a message to the application screen.
+     * @param message Message to write to screen.
+     */
     public void toastMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    //Get Old Athlete Information if still on device
+    /**
+     * Gets old athlete information still saved on device if
+     * there is no network connection to retrieve new Athlete data.
+     * @throws IOException
+     */
     public void getOldAthlete() throws IOException {
         adminData.readAthletesData(SignIn.this);
+        Log.d("SignIn", "Old Athlete Data Imported");
 
     }
 
-    private static final String[] NAMES = new String[]{
-            "Curtis", "Nathan"
-    };
-
-    //Method to grab parents names so they can appear when singing in.
+    /**
+     * Reads the athleteSamples list for athletes parents names
+     * and adds them to the parentsNames arraylist. Removes any duplicate
+     * adult names for parents with multiple children registers in the database
+     */
     private void autoComplete() {
-
+        //Arraylist to store parents names
         List<String> parentNames = new ArrayList<>();
+
+        //Clears any existing information in arraylist
         parentNames.clear();
 
+        //Checks for same parent with multiple entries in database to prevent duplicates when singing in.
         for (int i = 0; i < athleteSamples.size();i++) {
-            //Checks for same parent with multiple entries in database to prevent duplicates when singing in.
             if (!parentNames.contains(athleteSamples.get(i).getParent1Name())) {
                 parentNames.add(athleteSamples.get(i).getParent1Name());
             }
@@ -184,18 +173,12 @@ public class SignIn extends AppCompatActivity {
             }
         }
 
+            //Creates adapter for parentNames
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, parentNames);
 
+            //Sends adapter to autocomplete text view
             AutoCompleteTextView acTextView = findViewById(R.id.autoParentName);
             acTextView.setThreshold(1);
             acTextView.setAdapter(adapter);
-
-
     }
 }
-
-
-
-
-
-

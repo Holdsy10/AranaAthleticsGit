@@ -11,6 +11,17 @@
 
 
     <!-- laned strings start -->
+    
+    <string-array name="numbers">
+        <item>100m</item>
+        <item>200m</item>
+        <item>400m</item>
+        <item>800m</item>
+        <item>1000m</item>
+        <item>1500m</item>
+        <item>2000m</item>
+    </string-array>
+    
     <string name="title_activity_laned_events">LanedEvents</string>
 
     <string name="exitButton">Exit</string>

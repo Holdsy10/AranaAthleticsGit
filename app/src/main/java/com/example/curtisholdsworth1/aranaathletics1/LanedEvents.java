@@ -3,6 +3,7 @@ package com.example.curtisholdsworth1.aranaathletics1;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Environment;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,7 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-
+/**
+ * LanedEvents Class for the LanedEvents Activity
+ */
 public class LanedEvents extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     //Left Side Buttons
@@ -93,7 +96,7 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         setContentView(R.layout.activity_laned_events);
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+        Log.d("Navigate Activity","Laned Events Activity Started");
         setupUIViews();
         leftKeypad();
         rightKeypad();
@@ -105,21 +108,19 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         goToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent SignIn = new Intent (LanedEvents.this, SignIn.class);
+                Intent SignIn = new Intent(LanedEvents.this, SignIn.class);
                 startActivity(SignIn);
             }
 
         });
 
-
-
         leftTextEntry.addTextChangedListener(inputWatcher);
         rightTextEntry.addTextChangedListener(inputWatcher);
 
-        nextButton.setOnClickListener(new View.OnClickListener(){
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //setResults(race);
+                setResults();
                 race++;
                 raceNumber.setText("Race " + race);
 
@@ -129,26 +130,26 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (race >=2) {
+                if (race >= 2) {
                     race--;
-                    raceNumber.setText("Race " +race);
+                    raceNumber.setText("Race " + race);
                     getResults(race);
 
+                }
             }
-        }
         });
 
 
-        File fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator +"MyDir");
-        if(!fileDir.exists()){
-            try{
+        File fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MyDir");
+        if (!fileDir.exists()) {
+            try {
                 fileDir.mkdir();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator +"BlogData"+File.separator+"MyText.txt");
-        if(!file.exists()){
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "BlogData" + File.separator + "MyText.txt");
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -156,11 +157,22 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
             }
 
         }
-
-
-
     }
-    private void rightKeypad() {
+
+    /**
+     * Set's the Results of the specific race and saves it
+     */
+        private void setResults() {
+            leftTextEntry.setText("");
+            rightTextEntry.setText("");
+
+
+        }
+
+/**
+ * Creates a listener for each button on the right side keypad of the application
+ */
+    public void rightKeypad() {
         right0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,8 +265,10 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
     }
 
 
-
-    private void leftKeypad() {
+    /**
+     * Creates a listener for each button on the left side keypad of the application
+     */
+    public void leftKeypad() {
         left0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -346,8 +360,12 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         });
     }
 
-
-    private void updateRightKeypad() {
+    /**
+     * Makes sure that all athlete information entered is correct.
+     * If incorrect data is entered, this function deletes it from
+     * the right side athlete bib number input
+     */
+    public void updateRightKeypad() {
         try {
 
 
@@ -422,66 +440,58 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
                     rightTextEntry.setText(rightInput.substring(0, input - 1));
                 }
             }
-
         } catch (NumberFormatException e) {
         }
     }
 
-    private void updateLeftKeypad2() {
+
+
+    /**
+     * Makes sure that all athlete information entered is correct.
+     * If incorrect data is entered, this function deletes it from
+     * the left side athlete bib number input
+     */
+    public void updateLeftKeypad() {
         try {
-
-
-
-
-            for (int i = 0; i<athleteSamples.size(); i++) {
-
-                int input = leftTextEntry.length();
-                String leftInput = leftTextEntry.getText().toString();
-
-                if (leftInput.length()>=1 && leftInput.equals(athleteSamples.get(i).getAthleteNumber())){
-                    leftAthlete.setText(athleteSamples.get(i).getAthleteName());
-                }
-                else if (!leftInput.equals(athleteSamples.get(i).getAthleteNumber())){
-                    //leftTextEntry.setText(leftInput.substring(0, input-1));
-
-            }
-            }
-
-        } catch (NumberFormatException e) {
-        }
-    }
-
-    private void updateLeftKeypad() {
-        try {
-
-
             String leftInput = leftTextEntry.getText().toString();
             int input = leftTextEntry.length();
 
             //Normal Entry
             //123
             if (leftInput.length() > 3 && !leftInput.contains(",") && !leftInput.startsWith("0")) {
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input - 1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             //123,123
             if (leftInput.length() > 7 && leftInput.contains(",") && !leftInput.startsWith("0") && !leftInput.contains(",0")){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             //123,0123
             if (leftInput.length() > 8 && !leftInput.startsWith(("0")) && leftInput.contains(",0")){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
 
 
             // Runner is From Another Club
             if (leftInput.length() > 4 && leftInput.substring(0, 1).equals("0") && !leftInput.contains(",")) {
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             if (leftInput.length() > 9 && leftInput.startsWith(("0")) && leftInput.contains(",0") ){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             if (leftInput.length() > 8 && leftInput.startsWith(("0")) && !leftInput.contains(",0") ){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
 
 
@@ -490,31 +500,41 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
                 leftAthlete.setText("Trialist");
             }
             if (leftInput.length() > 5 && leftInput.contains("T,") && !leftInput.contains(",0")){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             if (leftInput.length() > 6 && leftInput.contains("T,") && leftInput.contains(",0")){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             if (leftInput.startsWith("T") && leftInput.length() > 1 && !leftInput.contains(",")){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
 
             // Double input on accident
             if (leftInput.contains(",,") || leftInput.contains("TT") || leftInput.contains("--") || leftInput.contains("T-") ||
-                     leftInput.contains("-T") || leftInput.contains(",-")|| leftInput.contains("-,") || leftInput.contains(",T,")) {
+                    leftInput.contains("-T") || leftInput.contains(",-")|| leftInput.contains("-,") || leftInput.contains(",T,")) {
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
-
 
 
             // If there is no runner
             if (leftInput.startsWith("-") && leftInput.length() > 1) {
-
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
             //if comma is first input
             if (leftInput.startsWith(",")){
+                Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                 leftTextEntry.setText(leftInput.substring(0, input-1));
+                Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
             }
 
             if (leftInput.length() == 0){
@@ -525,17 +545,23 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
                 int comma = 0;
                 comma++;
                 if (comma == 2) {
+                    Log.d("LanedEvents", "Incorrect Entry: " + leftTextEntry.getText().toString());
                     leftTextEntry.setText(leftInput.substring(0, input - 1));
+                    Log.d("LanedEvents", "New Entry: " + leftTextEntry.getText().toString());
                 }
             }
-
-
         } catch (NumberFormatException e) {
         }
     }
 
 
-    private void showLeftAthleteData() {
+    /**
+     * This gets the leftTextEntry field for athlete bib numbers, and
+     * then displays the athlete information in the textfield above.
+     * This function gets called every time the text changes in either
+     * the left or right athlete text entry.
+     */
+    public void showLeftAthleteData() {
         String leftInput = leftTextEntry.getText().toString();
         for (int i=0; i <athleteSamples.size(); i++) {
             for (int j=0; j <athleteSamples.size(); j++) {
@@ -566,7 +592,13 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         }
     }
 
-    private void showRightAthleteData() {
+    /**
+     * This gets the rightTextEntry field for athlete bib numbers, and
+     * then displays the athlete information in the textfield above.
+     * This function gets called every time the text changes in either
+     * the left or right athlete text entry.
+     */
+    public void showRightAthleteData() {
         String rightInput = rightTextEntry.getText().toString();
         for (int i=0; i <athleteSamples.size(); i++) {
             for (int j=0; j <athleteSamples.size(); j++) {
@@ -597,40 +629,18 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         }
     }
 
-    public List setResults(Integer raceNumber) {
-
-
-
-
-            resultList results = new resultList();
-
-            results.setRaceNumber(raceNumber);
-            results.setRaceDistance(raceDistance);
-            results.setRaceType(raceType);
-            results.setLane1AthleteNumber(leftTextEntry.getText().toString());
-            results.setLane2AthleteNumber(rightTextEntry.getText().toString());
-
-            Log.d("Results", results.getRaceNumber().toString());
-
-
-            resultLists.add(results);
-       // }
-            leftTextEntry.setText("");
-            rightTextEntry.setText("");
-
-
-        return resultLists;
-    }
-
+    /**
+     * Gets the results for a specific race
+     * @param raceNumber The race number for which the results you want returned
+     * @return The results as a list
+     */
     public List getResults(Integer raceNumber) {
         resultList results = new resultList();
 
-                Log.d("Results",Integer.toString(raceNumber));
+        Log.d("Results",Integer.toString(raceNumber));
 
-
-                leftTextEntry.setText(resultLists.get(raceNumber).getLane1AthleteNumber());
-                rightTextEntry.setText(resultLists.get(raceNumber).getLane2AthleteNumber());
-
+        leftTextEntry.setText(resultLists.get(0).getLane1AthleteNumber());
+        rightTextEntry.setText(resultLists.get(0).getLane2AthleteNumber());
 
         return resultLists;
     }
@@ -638,30 +648,24 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
     private TextWatcher inputWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             updateLeftKeypad();
-            //updateLeftKeypad2();
             updateRightKeypad();
-
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            //updateLeftKeypad2();
             showLeftAthleteData();
             showRightAthleteData();
-
-            }
-
-
-
+        }
     };
 
-
+    /**
+     * Sets up the user interface for everything on the Laned Events screen
+     */
     private void setupUIViews () {
         //Left Side Entry
         left0 = findViewById(R.id.left0);
@@ -713,7 +717,7 @@ public class LanedEvents extends AppCompatActivity implements AdapterView.OnItem
         rightNoRunner = findViewById(R.id.rightNoRunner);
 
 
-            }
+    }
 
 
 

@@ -2,63 +2,62 @@ package com.example.curtisholdsworth1.aranaathletics1;
 
 
 import android.content.Context;
-import android.os.Environment;
-import android.os.Handler;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
-
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-
+/**
+ * Admin Class for the Admin Activity
+ */
 public class Admin extends AppCompatActivity {
 
-    private static int BUFFER_SIZE = 1024;
-    //public static List<AthleteSample> athleteSamples = new ArrayList<>();
+    static List<AthleteSample> athleteSamples = new ArrayList<>();
+    private String CSVFile = "fetch2.csv";
+    private String ExcelFile = "fetch2.xlsx";
 
 
+    /**
+     * On create method
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
         Button fetchResults = findViewById(R.id.adminFetch);
+        Button home = findViewById(R.id.adminHome);
+
+        home.setOnClickListener( new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent signIn = new Intent(Admin.this, SignIn.class);
+                startActivity(signIn);
+            }
+        });
+        Log.d("Navigate Activity","Admin Activity Started");
+
 
         fetchResults.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,151 +70,51 @@ public class Admin extends AppCompatActivity {
                                 Log.d("Debug", "" + downloaded + " / " + total);
                             }
                         })
-                        .write(new File(getFilesDir() + File.separator + "fetch2.xlsx"));
-                   //     .setCallback(new FutureCallback<File>() {
-                    //        @Override
-                     //       public void onCompleted(Exception e, File file) {
-                                /*try {
-                                    unzip(getFilesDir() + File.separator + "fetch2.xlsx", getFilesDir() + File.separator + "fetch2");
-                                    //toastMessage("Unzipped File Successfully");
-                                    //readExcel();
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                //} catch (InvalidFormatException e1) {
-                                //    e1.printStackTrace();
-                                }*/
-                       //     }
-                    //    });
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
-                        int sheetIdx = 0; // 0 for first sheet
-                        try {
-                            convertSelectedSheetInXLXSFileToCSV(myFile, sheetIdx);
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }, 1000);
+                        .write(new File(getFilesDir() + File.separator + ExcelFile))
+                        .setCallback(new FutureCallback<File>() {
+                           @Override
+                            public void onCompleted(Exception e, File file) {
+                               File myFile = new File(getFilesDir() + File.separator + ExcelFile);
+                               int sheetIdx = 0; // 0 for first sheet
+                               try {
+                                   convertSelectedSheetInXLXSFileToCSV(myFile, sheetIdx);
+                                   toastMessage("Athletes Downloaded Successfully");
+                               } catch (Exception e1) {
+                                   e1.printStackTrace();
+                               }
 
-                final Handler handler2 = new Handler();
-                handler2.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                               try {
+                                   readAthletesData(Admin.this);
 
-                        try {
-                            readAthletesData();
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }, 1000);
-
+                               } catch (Exception e1) {
+                                   e1.printStackTrace();
+                               }
+                           }
+                        });
             }
-
         });
     }
 
-    //Easy method to write a message to device screen.
+    /**
+     * Grabs a message and toasts to application
+     * @param message
+     */
     public void toastMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+
     /**
-     * Unzip a zip file.  Will overwrite existing files.
-     *
-     * @param zipFile  Full path of the zip file you'd like to unzip.
-     * @param location Full path of the directory you'd like to unzip to (will be created if it doesn't exist).
-     * @throws IOException
+     * This function grabs a sheet in a excel file and converts
+     * it to CSV format
+     * @param xlsxFile
+     * @param sheetIdx
+     * @throws Exception
      */
-
-    public static void unzip(String zipFile, String location) throws IOException {
-        int size;
-        byte[] buffer = new byte[BUFFER_SIZE];
-
-        try {
-            if (!location.endsWith(File.separator)) {
-                location += File.separator;
-            }
-            File f = new File(location);
-            if (!f.isDirectory()) {
-                f.mkdirs();
-            }
-            ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile), BUFFER_SIZE));
-            try {
-                ZipEntry ze = null;
-                while ((ze = zin.getNextEntry()) != null) {
-                    String path = location + ze.getName();
-                    File unzipFile = new File(path);
-
-                    if (ze.isDirectory()) {
-                        if (!unzipFile.isDirectory()) {
-                            unzipFile.mkdirs();
-                        }
-                    } else {
-                        // check for and create parent directories if they don't exist
-                        File parentDir = unzipFile.getParentFile();
-                        if (null != parentDir) {
-                            if (!parentDir.isDirectory()) {
-                                parentDir.mkdirs();
-                            }
-                        }
-                        // unzip the file
-                        FileOutputStream out = new FileOutputStream(unzipFile, false);
-                        BufferedOutputStream fout = new BufferedOutputStream(out, BUFFER_SIZE);
-                        try {
-                            while ((size = zin.read(buffer, 0, BUFFER_SIZE)) != -1) {
-                                fout.write(buffer, 0, size);
-                            }
-                            zin.closeEntry();
-                        } finally {
-                            fout.flush();
-                            fout.close();
-                        }
-                    }
-                }
-            } finally {
-                zin.close();
-            }
-        } catch (Exception e) {
-            Log.e("Error", "Unzip exception", e);
-        }
-    }
-
-    public void readExcel() throws IOException, InvalidFormatException {
-        //https://www.callicoder.com/java-read-excel-file-apache-poi/
-        // Creating a Workbook from an Excel file (.xls or .xlsx)
-        Workbook workbook = WorkbookFactory.create(new File(getFilesDir() + "/fetch2.xlsx"));
-        //toastMessage("Created Workbook");
-        // Retrieving the number of sheets in the Workbook
-        Log.d("Debug", "Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
-        Log.d("Debug", "Retrieving Sheets using for-each loop");
-        for (Sheet sheet : workbook) {
-            Log.d("Debug", "=> " + sheet.getSheetName());
-        }
-
-        // Getting the Sheet at index zero
-        Sheet sheet = workbook.getSheetAt(0);
-
-        // Create a DataFormatter to format and get each cell's value as String
-        DataFormatter dataFormatter = new DataFormatter();
-
-        // use a for-each loop to iterate over the rows and columns
-        Log.d("Debug", "\n\nIterating over Rows and Columns using for-each loop\n");
-        for (Row row : sheet) {
-            for (Cell cell : row) {
-                String cellValue = dataFormatter.formatCellValue(cell);
-                Log.d("Debug", cellValue + "\t");
-            }
-        }
-    }
-
     private void convertSelectedSheetInXLXSFileToCSV(File xlsxFile, int sheetIdx) throws Exception {
 
-        List<AthleteSample> athleteSamples = new ArrayList<>();
-        File myFile = new File(getFilesDir() + File.separator + "fetch2.xlsx");
+        //List<AthleteSample> athleteSamples = new ArrayList<>();
+        File myFile = new File(getFilesDir() + File.separator + ExcelFile);
 
         //int sheetIdx = 0; // 0 for first sheet
         FileInputStream fileInStream = new FileInputStream(xlsxFile);
@@ -224,7 +123,7 @@ public class Admin extends AppCompatActivity {
         // Open the xlsx and get the requested sheet from the workbook
         XSSFWorkbook workBook = new XSSFWorkbook(fileInStream);
         XSSFSheet selSheet = workBook.getSheetAt(sheetIdx);
-        BufferedWriter bwr = new BufferedWriter(new FileWriter(new File(getFilesDir()+File.separator+"fetch2.csv")));
+        BufferedWriter bwr = new BufferedWriter(new FileWriter(new File(getFilesDir()+File.separator+CSVFile)));
         StringBuilder sb = new StringBuilder();
 
         // Iterate through all the rows in the selected sheet
@@ -256,51 +155,74 @@ public class Admin extends AppCompatActivity {
                     default:
                 }
             }
-            //System.out.println(sb.toString());
-            /*
-             * To write contents of StringBuffer to a file, use
-             * BufferedWriter class.
-             */
-            //write contents of StringBuffer to a file
-            //bwr.write(sb.toString());
-            //bwr.newLine();
+
+            bwr.write(sb.toString());
+            bwr.newLine();
         }
         //flush the stream
         bwr.flush();
         //close the stream
         bwr.close();
+
         workBook.close();
         Log.d("Debug","Database Downloaded Successfully");
+        toastMessage("Athletes Downloaded Successfully");
     }
 
-    public void readAthletesData() throws IOException{
-        BufferedReader reader = new BufferedReader(new FileReader(getFilesDir()+File.separator+"fetch2.csv"));
-        String line = "";
-        AthleteSample sample = new AthleteSample();
+    /**
+     * This application reads the CSV file on the device
+     * @param context Application Context
+     * @return athlete samples as arraylist
+     * @throws IOException
+     */
+    public List readAthletesData(Context context) throws IOException{
 
+        //Buffered Reader to Read Athlete Information CSV
+        BufferedReader reader = new BufferedReader(new FileReader( context.getFilesDir()+File.separator+CSVFile));
+        String line = "";
+
+        /* Goes through CSV line by line and extracts relevant athlete information
+        and adds them to the athleteSamples list so they can be accessed later
+         */
         try {
             while ((line = reader.readLine()) != null) {
-
+                AthleteSample sample = new AthleteSample();
                 String[] tokens = line.split(",");
                 sample.setAthleteName(tokens[1]+" "+tokens[2]);
                 sample.setAthleteNumber(tokens[0]);
                 sample.setAthleteAge(tokens[4]);
                 sample.setAthleteGender(tokens[6]);
 
-                //athleteSamples.add(sample);
+                sample.setParent1Name(tokens[13]+" "+tokens[14]);
+                sample.setParent2Name(tokens[17]+" "+tokens[18]);
+
+
+                athleteSamples.add(sample);
+
 
             }
+            //Exception to Catch if file is not present
         } catch (IOException e) {
             Log.wtf("MyActivity", "Error Reading Data File on Line " + line, e);
             e.printStackTrace();
         }
-        toastMessage("Athletes Imported!");
+        //Once successfully imported a message is printed to the user
+        //toastMessage("Athletes Imported!");
+        //Toast.makeText(this, "Athletes Imported!", Toast.LENGTH_SHORT).show();
+        Log.d("Debug","Athletes Imported");
+
         //return athleteSamples;
+        return athleteSamples;
     }
 
-    //public List<AthleteSample> getList() {
-        //return athleteSamples;
-    //}
+
+    /**
+     * Gets the athletesample list
+     * @return all athlete samples as arraylist
+     */
+    public List<AthleteSample> getList() {
+        return athleteSamples;
+    }
 
 
 
